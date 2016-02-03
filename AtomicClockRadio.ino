@@ -207,24 +207,16 @@ void displayInfoGPS()
   Serial.print(gps.date.month());
   Serial.print(F("/"));
   Serial.print(gps.date.day());
-    lcd.setCursor(0,0);
-   // lcd.print(gps.date.month());
-   // lcd.print(F("/"));
-   // lcd.print(gps.date.day());
-   lcd.print(month());
-   lcd.print(F("/"));
-   lcd.print(day());
-
-   
+ 
   }
   else
   {
     Serial.print(F("INVALID"));
-    lcd.print(F("INVALID"));
+   // lcd.print(F("INVALID"));
   }
 
   Serial.print(F(" "));
-  lcd.print(F(" "));
+  //lcd.print(F(" "));
   if (gps.time.isValid())
   {
     //hour = gps.time.hour(); 
@@ -243,15 +235,36 @@ void displayInfoGPS()
 
     // lcd.print(F(":"));
     if (gps.time.minute() < 10) Serial.print(F("0"));
+
+    
    // lcd.print(gps.time.minute());
    // lcd.print(F(":"));
    // if (gps.time.second() < 10) lcd.print(F("0"));
    // lcd.print(gps.time.second());
 
-   lcd.print(hour());
+  /* First Row of LCD */
+   lcd.setCursor(0,0);   // Set Cursor to first row. 
+   lcd.print(hourFormat12());
    lcd.print(F(":"));
    lcd.print(minute());
    lcd.print(F(" "));
+   if (isAM()) {
+      lcd.print(F("AM")); 
+   }
+   else {
+      lcd.print(F("PM"));
+   }
+   //lcd.print(F("                "));
+   /* Second Row of LCD */
+
+   lcd.setCursor(0,1);   // Set Cursor to second row. 
+   lcd.print(dayShortStr(weekday()));
+   lcd.print(F(" "));
+   lcd.print(monthShortStr(month()));
+   lcd.print(F(" "));
+   lcd.print(day());
+   lcd.print(F("                "));
+   
 
     
   }
@@ -259,7 +272,7 @@ void displayInfoGPS()
   {
     Serial.print(F("INVALID"));
     lcd.setCursor(0,0);
-    lcd.print(F("INVALID"));
+    // lcd.print(F("INVALID"));
   }
 
   Serial.println();
