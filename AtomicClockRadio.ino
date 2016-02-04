@@ -90,6 +90,7 @@ void setup()
 
 // LCD Keypad Setup
  lcd.begin(16, 2);              // start the library
+ lcd.clear();                   // Clear display
  lcd.setCursor(0,0);
   
 } // End of Setup
@@ -244,8 +245,14 @@ void displayInfoGPS()
 
   /* First Row of LCD */
    lcd.setCursor(0,0);   // Set Cursor to first row. 
+      if (hourFormat12() < 10) {
+     lcd.print(F(" "));
+   }
    lcd.print(hourFormat12());
    lcd.print(F(":"));
+   if (minute() < 10) {
+     lcd.print(F("0"));
+   }
    lcd.print(minute());
    lcd.print(F(" "));
    if (isAM()) {
