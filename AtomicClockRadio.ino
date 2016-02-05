@@ -9,6 +9,8 @@
 #include <Si4703_Breakout.h>
 #include <Wire.h>
 
+int mode;  // Stores the display and input state. 
+
 /* Radio Setup */
 int resetPin = 2;
 int SDIO = A4;
@@ -75,7 +77,9 @@ void setup()
   
 
   radio.powerOn();
-  radio.setVolume(0);
+  radio.setVolume(8);
+  channel = 881; // Set CBC as default.
+  radio.setChannel(channel);
 
 
   /* GPS Setup */
@@ -97,6 +101,14 @@ void setup()
 
 void loop()
 {
+/** Set up state machine for keyboard buttons. 
+ *  States:  Main - shows time and date, shows whether there is an active alarm. 
+ *                - allows for changing the radio station. 
+ *           Alarm set - for setting the alarm. 
+ *           Lat/long - Shows the latitude and longitude. 
+ */
+
+  
   serviceRadio();
   serviceGPS();
  // delay(1000); // Wait one second.
