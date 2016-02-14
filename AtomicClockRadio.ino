@@ -101,6 +101,9 @@ void setup()
 
 void loop()
 {
+char str_channel[5];
+float flt_channel; 
+  
 /** Set up state machine for keyboard buttons. 
  *  States:  Main - shows time and date, shows whether there is an active alarm. 
  *                - allows for changing the radio station. 
@@ -111,13 +114,20 @@ void loop()
   
   serviceRadio();
   serviceGPS();
+     
+  // Print radio channel 
+
+ //  str_channel = String(channel);
+  
+  lcd.setCursor(11,0);  
+  lcd.print(str_channel);
  // delay(1000); // Wait one second.
 }// End of Main Loop
 
 void displayInfo()
 {
-   Serial.print("Channel:"); Serial.print(channel); 
-   Serial.print(" Volume:"); Serial.println(volume); 
+   // Serial.print("Channel:"); Serial.print(channel); 
+   // Serial.print(" Volume:"); Serial.println(volume); 
 }
 
 void serviceGPS()
