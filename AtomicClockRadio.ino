@@ -151,13 +151,56 @@ void serviceGPS()
 
 void  serviceRadio()
 {
+
+lcd_key = read_LCD_buttons();
+switch (lcd_key){
+  case btnNONE:
+  {
+    break;
+  }
+  case btnRIGHT:
+  {
+  channel = channel + 2;                // Increase frequency.
+  if (channel > 1080) channel = 881;    // Make sure channel is in broadcast range (wrap around dial).
+  radio.setChannel(channel);
+  break;
+  }
+    case btnLEFT:
+  {
+    channel = channel - 2;              // Decrease frequency. 
+    if (channel < 880) channel = 1079;  // Make sure channel is in broadcast range (wrap around dial). 
+    radio.setChannel(channel);
+    break;
+  }
+    case btnUP:
+  {
+    break;
+  }
+    case btnDOWN:
+  {
+    break;
+  }
+    case btnSELECT:
+  {
+    break;
+  }
+}
+
+do {                                        // Wait for key to be released. 
+    lcd_key = read_LCD_buttons();
+  } while (lcd_key != btnNONE);
+
+
+/*
+ 
 if (Serial.available())
   {
-    char ch = Serial.read();
+    
+    //char ch = Serial.read();
     if (ch == 'u') 
     {
-      channel = radio.seekUp();
-      displayInfo();
+     channel = radio.seekUp(); 
+     displayInfo();
     } 
     else if (ch == 'd') 
     {
@@ -197,7 +240,7 @@ if (Serial.available())
       Serial.print("RDS heard:");
       Serial.println(rdsBuffer);      
     }
-  }
+  } */
   
 }
 
