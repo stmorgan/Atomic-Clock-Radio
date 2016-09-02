@@ -9,7 +9,13 @@
 #include <Si4703_Breakout.h>
 #include <Wire.h>
 
-int mode;  // Stores the display and input state. 
+
+#define NORMAL 0              // Mode labels.
+#define ALARMSET 1
+
+int mode = NORMAL;  // Stores the display and input state. Default is NORMAL, shows time, date and station. 
+
+
 
 /* Radio Setup */
 int resetPin = 2;
@@ -25,7 +31,7 @@ char rdsBuffer[10];
 static const int RXPin = 11, TXPin = 10;
 static const uint32_t GPSBaud = 9600;
 
-static const int UTC_OFFSET = -8;  // Greenwich Mean Time offset 
+static const int UTC_OFFSET = -7;  // Greenwich Mean Time offset 
 
 // The TinyGPS++ object
 TinyGPSPlus gps;
@@ -65,38 +71,20 @@ int read_LCD_buttons()
 
 void setup()
 {
-  /* Radio Setup */
-  Serial.begin(9600);
-  Serial.println("\n\nSi4703_Breakout Test Sketch");
-  Serial.println("===========================");  
-  Serial.println("a b     Favourite stations");
-  Serial.println("+ -     Volume (max 15)");
-  Serial.println("u d     Seek up / down");
-  Serial.println("r       Listen for RDS Data (15 sec timeout)");
-  Serial.println("Send me a command letter.");
-  
-
-  radio.powerOn();
-  radio.setVolume(8);
-  channel = 881; // Set CBC as default.
-  radio.setChannel(channel);
-
-
-  /* GPS Setup */
-  // Serial.begin(9600);
-  ss.begin(GPSBaud); 
-
-  Serial.println(F("DeviceExample.ino"));
-  Serial.println(F("A simple demonstration of TinyGPS++ with an attached GPS module"));
-  Serial.print(F("Testing TinyGPS++ library v. ")); Serial.println(TinyGPSPlus::libraryVersion());
-  Serial.println(F("by Mikal Hart"));
-  Serial.println();
-
-// LCD Keypad Setup
+ // LCD Keypad Setup
  lcd.begin(16, 2);              // start the library
  lcd.clear();                   // Clear display
  lcd.setCursor(0,0);
-  
+ 
+  /* Radio Setup */
+  radio.powerOn();
+  radio.setVolume(8);
+  channel = 881;                // Set CBC as default.
+  radio.setChannel(channel);
+  displayRadioInfo();           // Print radio channel 
+
+  /* GPS Setup */
+  ss.begin(GPSBaud); 
 } // End of Setup
 
 void loop()
@@ -110,247 +98,11 @@ float flt_channel;
  *           Alarm set - for setting the alarm. 
  *           Lat/long - Shows the latitude and longitude. 
  */
-
-  
   serviceRadio();
   serviceGPS();
-  displayRadioInfo();                          // Print radio channel 
  }// End of Main Loop
 
-void displayRadioInfo() {
-    lcd.setCursor(11,0);  
-  if (channel < 1000) {
-    lcd.print(F(" "));
-    // lcd.setCursor(12,0);
-  }
-  lcd.print(channel / 10);                   // Print integer part of FM frequency.
-  lcd.print(F("."));                         // Print decimal point.
-  lcd.print(channel - 10 * (channel / 10));  // Print decimal digit in FM frequency
-}// End of displayRadioInfo
-
-void displayInfo()
-{
-   // Serial.print("Channel:"); Serial.print(channel); 
-   // Serial.print(" Volume:"); Serial.println(volume); 
-}
-
-void serviceGPS()
-{
- // Serial.println("GPS Stub");
-
- while (ss.available() > 0)
-    if (gps.encode(ss.read()))
-      displayInfoGPS();
-
-  if (millis() > 5000 && gps.charsProcessed() < 10)
-  {
-    Serial.println(F("No GPS detected: check wiring."));
-    while(true);
-  }
-}
-
-void  serviceRadio()
-{
-
-lcd_key = read_LCD_buttons();
-switch (lcd_key){
-  case btnNONE:
-  {
-    break;
-  }
-  case btnRIGHT:
-  {
-  channel = channel + 2;                // Increase frequency.
-  if (channel > 1080) channel = 881;    // Make sure channel is in broadcast range (wrap around dial).
-  radio.setChannel(channel);
-  break;
-  }
-    case btnLEFT:
-  {
-    channel = channel - 2;              // Decrease frequency. 
-    if (channel < 880) channel = 1079;  // Make sure channel is in broadcast range (wrap around dial). 
-    radio.setChannel(channel);
-    break;
-  }
-    case btnUP:
-  {
-    break;
-  }
-    case btnDOWN:
-  {
-    break;
-  }
-    case btnSELECT:
-  {
-    break;
-  }
-}
-
-do {                                        // Wait for key to be released. 
-    lcd_key = read_LCD_buttons();
-  } while (lcd_key != btnNONE);
-
-
-/*
- 
-if (Serial.available())
-  {
-    
-    //char ch = Serial.read();
-    if (ch == 'u') 
-    {
-     channel = radio.seekUp(); 
-     displayInfo();
-    } 
-    else if (ch == 'd') 
-    {
-      channel = radio.seekDown();
-      displayInfo();
-    } 
-    else if (ch == '+') 
-    {
-      volume ++;
-      if (volume == 16) volume = 15;
-      radio.setVolume(volume);
-      displayInfo();
-    } 
-    else if (ch == '-') 
-    {
-      volume --;
-      if (volume < 0) volume = 0;
-      radio.setVolume(volume);
-      displayInfo();
-    } 
-    else if (ch == 'a')
-    {
-      channel = 881; // Rock FM
-      radio.setChannel(channel);
-      displayInfo();
-    }
-    else if (ch == 'b')
-    {
-      channel = 953; // BBC R4
-      radio.setChannel(channel);
-      displayInfo();
-    }
-    else if (ch == 'r')
-    {
-      Serial.println("RDS listening");
-      radio.readRDS(rdsBuffer, 15000);
-      Serial.print("RDS heard:");
-      Serial.println(rdsBuffer);      
-    }
-  } */
-  
-}
-
-void displayInfoGPS()
-{
-
-  // int hour;
-
-  // Serial.print(F("  Date/Time: "));
-  if (gps.date.isValid())
-  {
-
-      int Year = gps.date.year();
-      byte Month = gps.date.month();
-      byte Day = gps.date.day();
-      byte Hour = gps.time.hour();
-      byte Minute = gps.time.minute();
-      byte Second = gps.time.second();
 
 
 
-        // Set Time from GPS data string
-        setTime(Hour, Minute, Second, Day, Month, Year);
-        // Calc current Time Zone time by offset value
-        
-         Serial.println();
-         Serial.print("Before: "); 
-         Serial.print(hour());
-        adjustTime(UTC_OFFSET * SECS_PER_HOUR);     
-         Serial.print(" After: "); 
-         Serial.println(hour());
-        
-    
-  Serial.print(gps.date.month());
-  Serial.print(F("/"));
-  Serial.print(gps.date.day());
- 
-  }
-  else
-  {
-    Serial.print(F("INVALID"));
-   // lcd.print(F("INVALID"));
-  }
-
-  Serial.print(F(" "));
-  //lcd.print(F(" "));
-  if (gps.time.isValid())
-  {
-    //hour = gps.time.hour(); 
-   //if (hour > 12) hour = hour - 12; 
-    //if (hour == 0) hour = 12; 
-   // if (hour < 10) Serial.print(F(" "));
-   // Serial.print(hour);
-   // lcd.print(hour);
-    
-    Serial.print(F(":"));
-    if (gps.time.minute() < 10) Serial.print(F("0"));
-    Serial.print(gps.time.minute());
-    Serial.print(F(":"));
-    if (gps.time.second() < 10) Serial.print(F("0"));
-    Serial.print(gps.time.second());
-
-    // lcd.print(F(":"));
-    if (gps.time.minute() < 10) Serial.print(F("0"));
-
-    
-   // lcd.print(gps.time.minute());
-   // lcd.print(F(":"));
-   // if (gps.time.second() < 10) lcd.print(F("0"));
-   // lcd.print(gps.time.second());
-
-  /* First Row of LCD */
-   lcd.setCursor(0,0);   // Set Cursor to first row. 
-      if (hourFormat12() < 10) {
-     lcd.print(F(" "));
-   }
-   lcd.print(hourFormat12());
-   lcd.print(F(":"));
-   if (minute() < 10) {
-     lcd.print(F("0"));
-   }
-   lcd.print(minute());
-   lcd.print(F(" "));
-   if (isAM()) {
-      lcd.print(F("AM")); 
-   }
-   else {
-      lcd.print(F("PM"));
-   }
-   //lcd.print(F("                "));
-   /* Second Row of LCD */
-
-   lcd.setCursor(0,1);   // Set Cursor to second row. 
-   lcd.print(dayShortStr(weekday()));
-   lcd.print(F(" "));
-   lcd.print(monthShortStr(month()));
-   lcd.print(F(" "));
-   lcd.print(day());
-   lcd.print(F("                "));
-   
-
-    
-  }
-  else
-  {
-    Serial.print(F("INVALID"));
-    lcd.setCursor(0,0);
-    // lcd.print(F("INVALID"));
-  }
-
-  Serial.println();
-}
 
