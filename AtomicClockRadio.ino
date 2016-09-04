@@ -12,6 +12,9 @@
 
 #define NORMAL 0              // Mode labels.
 #define ALARMSET 1
+#define GMT_OFFSET 2
+#define LAT_LONG 3
+#define STN_INFO 4
 
 int mode = NORMAL;  // Stores the display and input state. Default is NORMAL, shows time, date and station. 
 
@@ -98,8 +101,76 @@ float flt_channel;
  *           Alarm set - for setting the alarm. 
  *           Lat/long - Shows the latitude and longitude. 
  */
-  serviceRadio();
-  serviceGPS();
+//  serviceRadio();
+//  serviceGPS();
+
+//lcd.setCursor(0,0); 
+//lcd.print(GMT_OFFSET);
+
+lcd.setCursor(0,1);
+lcd.print(mode);
+
+switch (mode) {
+  case NORMAL:
+  {
+//    lcd.clear();
+    lcd.setCursor(0,0); 
+    lcd.print(F("NORMAL    "));
+    // if volume increment/decrement buttons pressed, adjust volume. 
+    // if radio change buttons pressed, change channel and update displayed channel. 
+    
+  }
+  break;
+case ALARMSET:
+  {
+//    lcd.clear();
+    lcd.setCursor(0,0); 
+    lcd.print(F("ALARMSET "));
+    // adjust time for alarm for weekday and weekend, turn alarms on and off. 
+  }
+  break;
+case GMT_OFFSET:
+  {
+//    lcd.clear();
+    lcd.setCursor(0,0); 
+    lcd.print(F("GMT_OFFSET"));
+    // check for GMT offset increment/decrement and adjust offset. (-12 wraps around to 12). 
+  }
+  break;
+case LAT_LONG:
+  {
+//    lcd.clear();
+    lcd.setCursor(0,0); 
+    lcd.print(F("LAT_LONG "));
+    // read lat/long. and print to lcd
+  }
+  break;
+case STN_INFO:
+  {
+//    lcd.clear();
+    lcd.setCursor(0,0); 
+    lcd.print(F("STN_INFO "));
+  }
+  break;
+ default: mode = NORMAL; 
+ break; 
+} // End of switch(mode)
+
+////lcd.clear();
+//lcd.setCursor(0,0); 
+//lcd.print(mode);
+delay(10);
+
+
+// Check if the mode ("Select") button has been pressed, and if so, move to the next mode. s
+lcd_key = read_LCD_buttons();
+if (lcd_key == btnSELECT) mode = (mode + 1) % 5; // cycle through modes when select pressed.
+do {                                        // Wait for key to be released. 
+    lcd_key = read_LCD_buttons();
+    delay(10);
+  } while (lcd_key != btnNONE);
+
+
  }// End of Main Loop
 
 

@@ -45,10 +45,10 @@ switch (lcd_key){
     
     break;
   }
-}
+} 
 
 do {                                        // Wait for key to be released. 
     lcd_key = read_LCD_buttons();
   } while (lcd_key != btnNONE);
-}  // Asertion: lcd_key == btnNONE
+} 
 
