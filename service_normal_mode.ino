@@ -46,9 +46,9 @@ switch (lcd_key){
   }
 } 
 
-//do {                                        // Wait for key to be released. 
-//    lcd_key = read_LCD_buttons();
-//  } while (lcd_key != btnNONE);
+do {                                        // Wait for key to be released. 
+    lcd_key = read_LCD_buttons();
+} while (lcd_key != btnNONE);
 
 delay(500); 
 } // End funtion
