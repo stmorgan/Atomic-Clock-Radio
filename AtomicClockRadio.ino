@@ -27,7 +27,7 @@ int SCLK = A5;
 
 Si4703_Breakout radio(resetPin, SDIO, SCLK);
 int channel;
-int volume;
+int volume = 8;   // Initialize volume to mid-range.
 char rdsBuffer[10];
 
 /* GPS Setup */
@@ -81,7 +81,7 @@ void setup()
  
   /* Radio Setup */
   radio.powerOn();
-  radio.setVolume(8);
+  radio.setVolume(volume);
   channel = 881;                // Set CBC as default.
   radio.setChannel(channel);
   displayRadioInfo();           // Print radio channel 

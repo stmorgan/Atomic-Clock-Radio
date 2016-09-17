@@ -18,7 +18,7 @@ void displayInfoGPS()
   if (gps.time.isValid())
   {
   /* First Row of LCD */
-   lcd.setCursor(0,0);   // Set Cursor to first row. 
+   lcd.setCursor(0,0);   // Set Cursor to left-most character in first (top) row. 
       if (hourFormat12() < 10) {
      lcd.print(F(" "));
    }
