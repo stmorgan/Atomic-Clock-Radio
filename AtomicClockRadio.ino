@@ -18,8 +18,6 @@
 
 int mode = NORMAL;  // Stores the display and input state. Default is NORMAL, shows time, date and station. 
 
-
-
 /* Radio Setup */
 int resetPin = 2;
 int SDIO = A4;
@@ -35,6 +33,12 @@ static const int RXPin = 11, TXPin = 10;
 static const uint32_t GPSBaud = 9600;
 
 static const int UTC_OFFSET = -7;  // Greenwich Mean Time offset 
+int Year;                 // Variables to be loaded by call to GPS chip. 
+byte Month;
+byte Day;
+byte Hour;
+byte Minute;
+byte Second;
 
 // The TinyGPS++ object
 TinyGPSPlus gps;

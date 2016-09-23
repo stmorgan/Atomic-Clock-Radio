@@ -1,21 +1,9 @@
 void displayInfoGPS()
 {
-  if (gps.date.isValid())
-  {
-      int Year = gps.date.year();                 // Read time from GPS chip. 
-      byte Month = gps.date.month();
-      byte Day = gps.date.day();
-      byte Hour = gps.time.hour();
-      byte Minute = gps.time.minute();
-      byte Second = gps.time.second();
-      setTime(Hour, Minute, Second, Day, Month, Year);  // Set Time from GPS data string
-      adjustTime(UTC_OFFSET * SECS_PER_HOUR);           // Calc current Time Zone time by offset value
-    }
-  else
-  {
-  lcd.print(F("INVALID"));
-  }
-  if (gps.time.isValid())
+setTime(Hour, Minute, Second, Day, Month, Year);  // Set Time from GPS data string
+adjustTime(UTC_OFFSET * SECS_PER_HOUR);           // Calc current Time Zone time by offset value
+
+
   {
   /* First Row of LCD */
    lcd.setCursor(0,0);   // Set Cursor to left-most character in first (top) row. 
@@ -44,9 +32,6 @@ void displayInfoGPS()
    lcd.print(day());
    lcd.print(F("                "));
   }
-  else
-  {
-    lcd.setCursor(0,0);
-  }
+
 }
 
