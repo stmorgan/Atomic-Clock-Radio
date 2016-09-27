@@ -3,7 +3,7 @@ void serviceGPS()
 {
  while (ss.available() > 0)
     if (gps.encode(ss.read()))
-      displayInfoGPS();
+    //  displayInfoGPS();
 
   if (millis() > 5000 && gps.charsProcessed() < 10)
   {

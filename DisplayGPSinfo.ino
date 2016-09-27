@@ -1,9 +1,7 @@
-void displayInfoGPS()
+void displayTimeDate()
 {
 setTime(Hour, Minute, Second, Day, Month, Year);  // Set Time from GPS data string
 adjustTime(UTC_OFFSET * SECS_PER_HOUR);           // Calc current Time Zone time by offset value
-
-
   {
   /* First Row of LCD */
    lcd.setCursor(0,0);   // Set Cursor to left-most character in first (top) row. 

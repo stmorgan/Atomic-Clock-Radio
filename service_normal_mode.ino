@@ -4,6 +4,7 @@ lcd_key = read_LCD_buttons();
 switch (lcd_key){
   case btnNONE:
   {
+    displayTimeDate();
     break;
   }
   case btnRIGHT:
